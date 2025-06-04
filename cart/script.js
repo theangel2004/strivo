@@ -20,7 +20,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 <tr>
                     <td colspan="5" style="text-align: center; padding: 30px 0;">
                         <p>Tu carrito está vacío</p>
-                        <a href="../products/index.html" style="display: inline-block; margin-top: 15px; color: #000; text-decoration: underline;">
+                        <a href="/product.html" style="display: inline-block; margin-top: 15px; color: #000; text-decoration: underline;">
                             Continuar comprando
                         </a>
                     </td>
@@ -279,7 +279,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Continue shopping button
             document.getElementById('continue-shopping').addEventListener('click', function() {
                 document.body.removeChild(successMessage);
-                window.location.href = '../home/index.html';
+                window.location.href = '/index.html';
             });
             
             // Reset form
@@ -326,7 +326,7 @@ document.addEventListener('DOMContentLoaded', function() {
     recommendedProducts.forEach(product => {
         product.addEventListener('click', function() {
             // In a real app, this would navigate to the product detail page
-            window.location.href = '../products/index.html';
+            window.location.href = '/product.html';
         });
     });
     

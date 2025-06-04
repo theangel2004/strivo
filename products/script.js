@@ -61,7 +61,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const breadcrumb = document.querySelector('.breadcrumb');
         if (!breadcrumb) return;
         
-        let breadcrumbHTML = '<a href="../home/index.html">HOME</a> / ';
+        let breadcrumbHTML = '<a href="/index.html">HOME</a> / ';
         
         switch(category) {
             case 'deportes':
@@ -71,20 +71,20 @@ document.addEventListener('DOMContentLoaded', function() {
                 breadcrumbHTML += '<span class="current">MUJER</span>';
                 break;
             case 'hombre':
-                breadcrumbHTML += '<a href="../products/product.html?category=hombre">HOMBRE</a> / ';
+                breadcrumbHTML += '<a href="/product.html?category=hombre">HOMBRE</a> / ';
                 breadcrumbHTML += '<span class="current">TODOS LOS PRODUCTOS</span>';
                 break;
             case 'running':
-                breadcrumbHTML += '<a href="../products/product.html?category=hombre">HOMBRE</a> / ';
+                breadcrumbHTML += '<a href="/product.html?category=hombre">HOMBRE</a> / ';
                 breadcrumbHTML += '<span class="current">RUNNING</span>';
                 break;
             case 'tenis':
-                breadcrumbHTML += '<a href="../products/product.html?category=hombre">HOMBRE</a> / ';
+                breadcrumbHTML += '<a href="/product.html?category=hombre">HOMBRE</a> / ';
                 breadcrumbHTML += '<span class="current">TENIS</span>';
                 break;
             case 'futbol':
-                breadcrumbHTML += '<a href="../products/product.html?category=hombre">HOMBRE</a> / ';
-                breadcrumbHTML += '<a href="../products/product.html?category=tenis">TENIS</a> / ';
+                breadcrumbHTML += '<a href="/product.html?category=hombre">HOMBRE</a> / ';
+                breadcrumbHTML += '<a href="/product.html?category=tenis">TENIS</a> / ';
                 breadcrumbHTML += '<span class="current">FÚTBOL</span>';
                 break;
             case 'descuentos':

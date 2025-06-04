@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>STRIVo - Detalle de Producto</title>
-    <link rel="stylesheet" href="product-detail/styles.css">
-    <link rel="stylesheet" href="./https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="../product-detail/styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </head>
 <body>
     <header>
         <div class="header-container">
             <div class="logo">
-                <a href="index.html"><h1>STRIVo</h1></a>
+                <a href="../index.html"><h1>STRIVo</h1></a>
             </div>
             <div class="search-bar">
                 <input type="text" placeholder="Buscar...">
@@ -20,16 +20,16 @@
             <div class="header-icons">
                 <a href="#" class="icon"><i class="far fa-question-circle"></i></a>
                 <a href="#" class="icon"><i class="far fa-user"></i></a>
-                <a href="carr.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
+                <a href="../cart/carr.html" class="icon"><i class="fas fa-shopping-cart"></i></a>
             </div>
         </div>
         <nav>
             <ul class="main-menu">
-                <li><a href="product.html">Deportes</a></li>
-                <li><a href="product.html">Mujer</a></li>
-                <li><a href="product.html">Hombre</a></li>
-                <li><a href="product.html">Niños & Bebé</a></li>
-                <li><a href="product.html">Descuentos</a></li>
+                <li><a href="../products/product.html?category=deportes">Deportes</a></li>
+                <li><a href="../products/product.html?category=mujer">Mujer</a></li>
+                <li><a href="../products/product.html?category=hombre">Hombre</a></li>
+                <li><a href="../products/product.html?category=ninos">Niños & Bebé</a></li>
+                <li><a href="../products/product.html?category=descuentos">Descuentos</a></li>
                 <li><a href="#">Servicios</a></li>
             </ul>
         </nav>
@@ -37,10 +37,10 @@
 
     <main>
         <div class="breadcrumb">
-            <a href="index.html">HOME</a> / 
-            <a href="product.html">HOMBRE</a> / 
-            <a href="product.html">TENIS</a> / 
-            <a href="product.html">RUNNER</a> /
+            <a href="../index.html">HOME</a> / 
+            <a href="../products/product.html?category=hombre">HOMBRE</a> / 
+            <a href="../products/product.html?category=tenis">TENIS</a> / 
+            <a href="../products/product.html?category=runner">RUNNER</a> /
             <span class="current">NIKE LEGEND 10 CLUB FG/MG</span>
         </div>
 
@@ -119,22 +119,22 @@
         <section class="related-products">
             <h2>También te podría interesar</h2>
             <div class="related-grid">
-                <div class="related-card">
+                <div class="related-card" data-id="1">
                     <img src="https://images.pexels.com/photos/2385477/pexels-photo-2385477.jpeg" alt="Adidas Predator">
                     <h3>Adidas Predator Elite</h3>
                     <p class="price">$ 649.900</p>
                 </div>
-                <div class="related-card">
+                <div class="related-card" data-id="2">
                     <img src="https://images.pexels.com/photos/1032110/pexels-photo-1032110.jpeg" alt="Nike Mercurial">
                     <h3>Nike Mercurial Vapor</h3>
                     <p class="price">$ 599.900</p>
                 </div>
-                <div class="related-card">
+                <div class="related-card" data-id="3">
                     <img src="https://images.pexels.com/photos/2759783/pexels-photo-2759783.jpeg" alt="Puma Future Z">
                     <h3>Puma Future Z 1.3</h3>
                     <p class="price">$ 529.900</p>
                 </div>
-                <div class="related-card">
+                <div class="related-card" data-id="4">
                     <img src="https://images.pexels.com/photos/3621349/pexels-photo-3621349.jpeg" alt="Adidas X">
                     <h3>Adidas X Speedflow</h3>
                     <p class="price">$ 559.900</p>
@@ -148,27 +148,27 @@
             <div class="footer-column">
                 <h3>Acerca de STRIVo</h3>
                 <ul>
-                    <li><a href="#">Quiénes somos</a></li>
-                    <li><a href="#">Trabaja con nosotros</a></li>
-                    <li><a href="#">Nuestras tiendas</a></li>
+                    <li><a href="../about.html">Quiénes somos</a></li>
+                    <li><a href="../careers.html">Trabaja con nosotros</a></li>
+                    <li><a href="../stores.html">Nuestras tiendas</a></li>
                 </ul>
             </div>
             <div class="footer-column">
                 <h3>Ayuda</h3>
                 <ul>
-                    <li><a href="#">Estado del pedido</a></li>
-                    <li><a href="#">Envíos y entregas</a></li>
-                    <li><a href="#">Devoluciones</a></li>
-                    <li><a href="#">Contacto</a></li>
+                    <li><a href="../cart/carr.html">Estado del pedido</a></li>
+                    <li><a href="../shipping.html">Envíos y entregas</a></li>
+                    <li><a href="../returns.html">Devoluciones</a></li>
+                    <li><a href="../contact.html">Contacto</a></li>
                 </ul>
             </div>
             <div class="footer-column">
                 <h3>Síguenos</h3>
                 <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-youtube"></i></a>
+                    <a href="https://facebook.com/tuusuario" target="_blank"><i class="fab fa-facebook"></i></a>
+                    <a href="https://instagram.com/tuusuario" target="_blank"><i class="fab fa-instagram"></i></a>
+                    <a href="https://twitter.com/tuusuario" target="_blank"><i class="fab fa-twitter"></i></a>
+                    <a href="https://youtube.com/tuusuario" target="_blank"><i class="fab fa-youtube"></i></a>
                 </div>
             </div>
         </div>
@@ -177,6 +177,6 @@
         </div>
     </footer>
 
-    <script src="product-detail/script.js"></script>
+    <script src="../product-detail/script.js"></script>
 </body>
 </html>

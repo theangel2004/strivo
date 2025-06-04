@@ -1,5 +1,4 @@
 document.addEventListener('DOMContentLoaded', function() {
-    // Load cart items from localStorage
     const cartItemsContainer = document.getElementById('cart-items-container');
     const subtotalAmount = document.getElementById('subtotal-amount');
     const shippingAmount = document.getElementById('shipping-amount');
@@ -8,12 +7,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const modal = document.getElementById('checkout-modal');
     const closeModal = document.querySelector('.close-modal');
     const checkoutForm = document.getElementById('checkout-form');
-    
-    // Get cart items from localStorage
-    let cartItems = localStorage.getItem('cartItems') ? 
-        JSON.parse(localStorage.getItem('cartItems')) : [];
-    
-    // Display cart items
+
+    let cartItems = localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [];
+
     function displayCartItems() {
         if (cartItems.length === 0) {
             cartItemsContainer.innerHTML = `
@@ -29,13 +25,13 @@ document.addEventListener('DOMContentLoaded', function() {
             updateCartSummary();
             return;
         }
-        
+
         let cartHTML = '';
-        
+
         cartItems.forEach((item, index) => {
             const price = parseFloat(item.price.replace(/[^\d]/g, '')) / 100;
             const subtotal = price * item.quantity;
-            
+
             cartHTML += `
                 <tr data-index="${index}">
                     <td>
@@ -66,153 +62,109 @@ document.addEventListener('DOMContentLoaded', function() {
                 </tr>
             `;
         });
-        
+
         cartItemsContainer.innerHTML = cartHTML;
-        
-        // Add event listeners to buttons
-        const minusButtons = document.querySelectorAll('.quantity-btn.minus');
-        const plusButtons = document.querySelectorAll('.quantity-btn.plus');
-        const removeButtons = document.querySelectorAll('.remove-item');
-        
-        minusButtons.forEach(button => {
+
+        document.querySelectorAll('.quantity-btn.minus').forEach(button => {
             button.addEventListener('click', function() {
                 const index = this.getAttribute('data-index');
                 updateQuantity(index, -1);
             });
         });
-        
-        plusButtons.forEach(button => {
+
+        document.querySelectorAll('.quantity-btn.plus').forEach(button => {
             button.addEventListener('click', function() {
                 const index = this.getAttribute('data-index');
                 updateQuantity(index, 1);
             });
         });
-        
-        removeButtons.forEach(button => {
+
+        document.querySelectorAll('.remove-item').forEach(button => {
             button.addEventListener('click', function() {
                 const index = this.getAttribute('data-index');
                 removeItem(index);
             });
         });
-        
+
         updateCartSummary();
     }
-    
-    // Update item quantity
+
     function updateQuantity(index, change) {
         cartItems[index].quantity += change;
-        
-        // Make sure quantity doesn't go below 1
-        if (cartItems[index].quantity < 1) {
-            cartItems[index].quantity = 1;
-        }
-        
-        // Save updated cart
+        if (cartItems[index].quantity < 1) cartItems[index].quantity = 1;
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
-        
-        // Update display
         displayCartItems();
     }
-    
-    // Remove item from cart
+
     function removeItem(index) {
-        // Animation effect
         const itemRow = document.querySelector(`tr[data-index="${index}"]`);
         itemRow.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
         itemRow.style.opacity = '0';
         itemRow.style.transform = 'translateX(20px)';
-        
+
         setTimeout(() => {
-            // Remove item from array
             cartItems.splice(index, 1);
-            
-            // Save updated cart
             localStorage.setItem('cartItems', JSON.stringify(cartItems));
-            
-            // Update display
             displayCartItems();
         }, 300);
     }
-    
-    // Update cart summary
+
     function updateCartSummary() {
         let subtotal = 0;
-        let shipping = 0;
-        
         cartItems.forEach(item => {
             const price = parseFloat(item.price.replace(/[^\d]/g, '')) / 100;
             subtotal += price * item.quantity;
         });
-        
-        // Free shipping for orders over 100.000
-        if (subtotal < 100) {
-            shipping = 5;
-            document.querySelector('.free-shipping-message').style.display = 'none';
-        } else {
-            document.querySelector('.free-shipping-message').style.display = 'block';
-        }
-        
+
+        let shipping = subtotal < 100 ? 5 : 0;
         const total = subtotal + shipping;
-        
+
         subtotalAmount.textContent = `$ ${subtotal.toLocaleString()}`;
-        shippingAmount.textContent = shipping > 0 ? `$ ${shipping.toLocaleString()}` : 'GRATIS';
+        shippingAmount.textContent = shipping ? `$ ${shipping.toLocaleString()}` : 'GRATIS';
         totalAmount.textContent = `$ ${total.toLocaleString()}`;
-        
-        // Disable checkout button if cart is empty
-        if (cartItems.length === 0) {
-            checkoutBtn.disabled = true;
-            checkoutBtn.style.opacity = '0.5';
-            checkoutBtn.style.cursor = 'not-allowed';
-        } else {
-            checkoutBtn.disabled = false;
-            checkoutBtn.style.opacity = '1';
-            checkoutBtn.style.cursor = 'pointer';
+
+        const freeShippingMsg = document.querySelector('.free-shipping-message');
+        if (freeShippingMsg) {
+            freeShippingMsg.style.display = subtotal >= 100 ? 'block' : 'none';
         }
+
+        checkoutBtn.disabled = cartItems.length === 0;
+        checkoutBtn.style.opacity = cartItems.length === 0 ? '0.5' : '1';
+        checkoutBtn.style.cursor = cartItems.length === 0 ? 'not-allowed' : 'pointer';
     }
-    
-    // Checkout button event
-    checkoutBtn.addEventListener('click', function() {
-        if (cartItems.length === 0) return;
-        
-        // Show checkout modal
-        modal.style.display = 'block';
-        document.body.style.overflow = 'hidden'; // Prevent scrolling
+
+    checkoutBtn.addEventListener('click', () => {
+        if (cartItems.length > 0) {
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
     });
-    
-    // Close modal
-    closeModal.addEventListener('click', function() {
+
+    closeModal.addEventListener('click', () => {
         modal.style.display = 'none';
-        document.body.style.overflow = 'auto'; // Enable scrolling
+        document.body.style.overflow = 'auto';
     });
-    
-    // Close modal when clicking outside
-    window.addEventListener('click', function(e) {
+
+    window.addEventListener('click', (e) => {
         if (e.target === modal) {
             modal.style.display = 'none';
-            document.body.style.overflow = 'auto'; // Enable scrolling
+            document.body.style.overflow = 'auto';
         }
     });
-    
-    // Handle checkout form submission
+
     checkoutForm.addEventListener('submit', function(e) {
         e.preventDefault();
-        
-        // Show loading indicator
+
         const submitBtn = document.querySelector('.submit-btn');
         const originalText = submitBtn.textContent;
         submitBtn.textContent = 'Procesando...';
         submitBtn.disabled = true;
-        
-        // Simulate API call
+
         setTimeout(() => {
-            // Clear cart
             localStorage.removeItem('cartItems');
-            
-            // Show success message
             modal.style.display = 'none';
             document.body.style.overflow = 'auto';
-            
-            // Show success message
+
             const successMessage = document.createElement('div');
             successMessage.className = 'success-message';
             successMessage.innerHTML = `
@@ -224,8 +176,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     <button id="continue-shopping">Continuar comprando</button>
                 </div>
             `;
-            
-            // Style the message
+
             Object.assign(successMessage.style, {
                 position: 'fixed',
                 top: '0',
@@ -238,7 +189,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 justifyContent: 'center',
                 zIndex: '1000'
             });
-            
+
             Object.assign(successMessage.querySelector('.success-content').style, {
                 backgroundColor: '#fff',
                 padding: '40px',
@@ -246,22 +197,22 @@ document.addEventListener('DOMContentLoaded', function() {
                 textAlign: 'center',
                 maxWidth: '500px'
             });
-            
+
             Object.assign(successMessage.querySelector('i').style, {
                 fontSize: '60px',
                 color: '#4CAF50',
                 marginBottom: '20px'
             });
-            
+
             Object.assign(successMessage.querySelector('h2').style, {
                 marginBottom: '15px'
             });
-            
+
             Object.assign(successMessage.querySelector('p').style, {
                 marginBottom: '10px',
                 color: '#666'
             });
-            
+
             Object.assign(successMessage.querySelector('button').style, {
                 marginTop: '20px',
                 padding: '12px 25px',
@@ -272,64 +223,49 @@ document.addEventListener('DOMContentLoaded', function() {
                 cursor: 'pointer',
                 fontSize: '16px'
             });
-            
-            // Add to document
+
             document.body.appendChild(successMessage);
-            
-            // Continue shopping button
-            document.getElementById('continue-shopping').addEventListener('click', function() {
+
+            document.getElementById('continue-shopping').addEventListener('click', () => {
                 document.body.removeChild(successMessage);
                 window.location.href = '/index.html';
             });
-            
-            // Reset form
+
             checkoutForm.reset();
             submitBtn.textContent = originalText;
             submitBtn.disabled = false;
-            
-            // Update cart display
             cartItems = [];
             displayCartItems();
         }, 2000);
     });
-    
-    // Initialize promo code functionality
+
     const promoButton = document.querySelector('.promo-input button');
     const promoInput = document.querySelector('.promo-input input');
-    
-    promoButton.addEventListener('click', function() {
-        if (!promoInput.value) {
+
+    promoButton.addEventListener('click', () => {
+        const code = promoInput.value.trim().toUpperCase();
+        if (!code) {
             alert('Por favor ingresa un código promocional');
-            return;
-        }
-        
-        if (promoInput.value.toUpperCase() === 'STRIVO10') {
-            // Apply 10% discount
+        } else if (code === 'STRIVO10') {
             alert('¡Código promocional aplicado! 10% de descuento');
-            // In a real app, you would recalculate the total here
             promoInput.value = '';
         } else {
             alert('Código promocional inválido');
         }
     });
-    
-    // Initialize calculate shipping functionality
+
     const calculateBtn = document.querySelector('.calculate-btn');
-    
-    calculateBtn.addEventListener('click', function() {
-        // In a real app, this would open a modal to calculate shipping
-        alert('Función de cálculo de envío');
-    });
-    
-    // Initialize recommended products
-    const recommendedProducts = document.querySelectorAll('.recommended-product');
-    recommendedProducts.forEach(product => {
-        product.addEventListener('click', function() {
-            // In a real app, this would navigate to the product detail page
+    if (calculateBtn) {
+        calculateBtn.addEventListener('click', () => {
+            alert('Función de cálculo de envío');
+        });
+    }
+
+    document.querySelectorAll('.recommended-product').forEach(product => {
+        product.addEventListener('click', () => {
             window.location.href = '/product.html';
         });
     });
-    
-    // Display cart items on page load
+
     displayCartItems();
 });

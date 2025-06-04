@@ -9,19 +9,17 @@ document.addEventListener('DOMContentLoaded', function() {
     
     thumbnails.forEach(thumbnail => {
         thumbnail.addEventListener('click', function() {
-            // Update main image
-            mainImage.src = this.getAttribute('data-image');
-            mainImage.alt = this.querySelector('img').alt;
+            // Update main image with smooth transition
+            mainImage.style.opacity = '0';
+            setTimeout(() => {
+                mainImage.src = this.getAttribute('data-image');
+                mainImage.alt = this.querySelector('img').alt;
+                mainImage.style.opacity = '1';
+            }, 200);
             
             // Update active state
             thumbnails.forEach(t => t.classList.remove('active'));
             this.classList.add('active');
-            
-            // Add animation effect
-            mainImage.classList.add('zoom-in');
-            setTimeout(() => {
-                mainImage.classList.remove('zoom-in');
-            }, 300);
         });
     });
     
@@ -31,9 +29,15 @@ document.addEventListener('DOMContentLoaded', function() {
     
     sizeButtons.forEach(button => {
         button.addEventListener('click', function() {
-            // Toggle selected state
-            sizeButtons.forEach(btn => btn.classList.remove('selected'));
+            // Toggle selected state with visual feedback
+            sizeButtons.forEach(btn => {
+                btn.classList.remove('selected');
+                btn.style.backgroundColor = '';
+                btn.style.color = '';
+            });
             this.classList.add('selected');
+            this.style.backgroundColor = '#000';
+            this.style.color = '#fff';
             selectedSize = this.textContent;
         });
     });
@@ -43,8 +47,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     addToCartButton.addEventListener('click', function() {
         if (!selectedSize) {
-            // Show error message if no size selected
-            alert('Por favor selecciona una talla antes de agregar al carrito');
+            showToast('Por favor selecciona una talla antes de agregar al carrito', 'error');
             return;
         }
         
@@ -52,6 +55,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const productName = document.querySelector('.product-info h1').textContent;
         const productPrice = document.querySelector('.product-price').textContent;
         const productImage = document.getElementById('main-product-image').src;
+        const productCategory = document.querySelector('.product-category').textContent;
         
         // Create cart item object
         const cartItem = {
@@ -60,7 +64,9 @@ document.addEventListener('DOMContentLoaded', function() {
             price: productPrice,
             size: selectedSize,
             image: productImage,
-            quantity: 1
+            category: productCategory,
+            quantity: 1,
+            addedAt: new Date().toISOString()
         };
         
         // Save to localStorage
@@ -85,25 +91,32 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show success message
         showAddedToCartMessage();
         
+        // Update cart notification in all pages
+        localStorage.setItem('cartUpdated', Date.now());
+        
         // Redirect to cart page after short delay
         setTimeout(() => {
             window.location.href = '../cart/carr.html';
-        }, 1000);
+        }, 1500);
     });
     
     // Related products functionality
     const relatedCards = document.querySelectorAll('.related-card');
     relatedCards.forEach(card => {
         card.addEventListener('click', function() {
-            // In a real app, this would navigate to the product detail page
-            // For demo, we'll just show a message
-            showToast('Cambiando a producto relacionado...');
-            
-            // Simulate page transition
-            setTimeout(() => {
-                // Reload the same page for demo purposes
-                window.location.reload();
-            }, 1000);
+            const relatedProductId = this.getAttribute('data-id');
+            window.location.href = `detail.html?id=${relatedProductId}`;
+        });
+        
+        // Add hover effect
+        card.addEventListener('mouseenter', function() {
+            this.style.transform = 'translateY(-5px)';
+            this.style.boxShadow = '0 10px 20px rgba(0,0,0,0.1)';
+        });
+        
+        card.addEventListener('mouseleave', function() {
+            this.style.transform = '';
+            this.style.boxShadow = '';
         });
     });
     
@@ -111,11 +124,11 @@ document.addEventListener('DOMContentLoaded', function() {
     const sizeGuideLink = document.querySelector('.size-guide');
     sizeGuideLink.addEventListener('click', function(e) {
         e.preventDefault();
-        
-        // In a real app, this would open a size guide modal
-        // For demo, we'll just show a message
-        showToast('Guía de tallas abierta');
-        
+        showSizeGuideModal();
+    });
+    
+    // Helper function to show size guide modal
+    function showSizeGuideModal() {
         // Create and show modal
         const modal = document.createElement('div');
         modal.className = 'size-guide-modal';
@@ -161,89 +174,32 @@ document.addEventListener('DOMContentLoaded', function() {
                         <td>27</td>
                     </tr>
                 </table>
-                <p>Para obtener la mejor ajuste, mide tu pie y consulta esta tabla.</p>
+                <p>Para obtener el mejor ajuste, mide tu pie y consulta esta tabla.</p>
+                <div class="measure-guide">
+                    <h3>Cómo medir tu pie:</h3>
+                    <ol>
+                        <li>Coloca tu pie sobre una hoja de papel</li>
+                        <li>Marca el punto más largo (talón a punta)</li>
+                        <li>Mide la distancia en centímetros</li>
+                        <li>Compara con nuestra tabla de tallas</li>
+                    </ol>
+                </div>
             </div>
         `;
-        
-        // Apply styles to modal
-        Object.assign(modal.style, {
-            position: 'fixed',
-            top: '0',
-            left: '0',
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0,0,0,0.5)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: '1000',
-            opacity: '0',
-            transition: 'opacity 0.3s ease'
-        });
-        
-        // Apply styles to modal content
-        const modalContent = modal.querySelector('.modal-content');
-        Object.assign(modalContent.style, {
-            backgroundColor: '#fff',
-            padding: '30px',
-            borderRadius: '8px',
-            maxWidth: '500px',
-            width: '90%',
-            maxHeight: '80vh',
-            overflow: 'auto'
-        });
-        
-        // Style the table
-        const table = modal.querySelector('table');
-        Object.assign(table.style, {
-            width: '100%',
-            borderCollapse: 'collapse',
-            marginBottom: '20px'
-        });
-        
-        // Style table cells
-        const cells = modal.querySelectorAll('th, td');
-        cells.forEach(cell => {
-            Object.assign(cell.style, {
-                border: '1px solid #ddd',
-                padding: '10px',
-                textAlign: 'center'
-            });
-        });
         
         // Add modal to body
         document.body.appendChild(modal);
         
-        // Show modal with animation
-        setTimeout(() => {
-            modal.style.opacity = '1';
-        }, 10);
-        
-        // Handle close button
-        const closeButton = modal.querySelector('.close-modal');
-        closeButton.style.cursor = 'pointer';
-        closeButton.style.position = 'absolute';
-        closeButton.style.top = '10px';
-        closeButton.style.right = '15px';
-        closeButton.style.fontSize = '24px';
-        
-        closeButton.addEventListener('click', function() {
-            modal.style.opacity = '0';
-            setTimeout(() => {
-                document.body.removeChild(modal);
-            }, 300);
-        });
-        
-        // Close on outside click
+        // Close modal when clicking outside or on close button
         modal.addEventListener('click', function(e) {
-            if (e.target === modal) {
+            if (e.target === modal || e.target.classList.contains('close-modal')) {
                 modal.style.opacity = '0';
                 setTimeout(() => {
                     document.body.removeChild(modal);
                 }, 300);
             }
         });
-    });
+    }
     
     // Helper function to show added to cart message
     function showAddedToCartMessage() {
@@ -257,112 +213,28 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>
         `;
         
-        // Style the message
-        Object.assign(message.style, {
-            position: 'fixed',
-            top: '20px',
-            right: '20px',
-            backgroundColor: '#4CAF50',
-            color: 'white',
-            padding: '15px',
-            borderRadius: '4px',
-            boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-            zIndex: '1000',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            transform: 'translateX(100%)',
-            transition: 'transform 0.3s ease'
-        });
-        
-        // Style the message content
-        const content = message.querySelector('.cart-message-content');
-        Object.assign(content.style, {
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center'
-        });
-        
-        // Style the icon
-        const icon = message.querySelector('i');
-        Object.assign(icon.style, {
-            fontSize: '24px',
-            marginBottom: '10px'
-        });
-        
-        // Style the progress bar
-        const progressBar = message.querySelector('.progress-bar');
-        Object.assign(progressBar.style, {
-            width: '100%',
-            height: '4px',
-            backgroundColor: 'rgba(255,255,255,0.3)',
-            marginTop: '10px',
-            overflow: 'hidden'
-        });
-        
-        const progress = message.querySelector('.progress');
-        Object.assign(progress.style, {
-            height: '100%',
-            width: '100%',
-            backgroundColor: 'white',
-            animation: 'progress 1s linear'
-        });
-        
-        // Create animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes progress {
-                0% { width: 100%; }
-                100% { width: 0%; }
-            }
-        `;
-        document.head.appendChild(style);
-        
-        // Add to document and animate
+        // Add to document
         document.body.appendChild(message);
         
+        // Remove message after animation
         setTimeout(() => {
-            message.style.transform = 'translateX(0)';
-        }, 10);
-        
-        setTimeout(() => {
-            message.style.transform = 'translateX(100%)';
+            message.style.opacity = '0';
             setTimeout(() => {
                 document.body.removeChild(message);
             }, 300);
-        }, 1000);
+        }, 2000);
     }
     
     // Helper function to show toast notification
-    function showToast(message) {
-        // Create toast element
+    function showToast(message, type = 'success') {
         const toast = document.createElement('div');
-        toast.className = 'toast';
+        toast.className = `toast ${type}`;
         toast.textContent = message;
-        
-        // Style the toast
-        Object.assign(toast.style, {
-            position: 'fixed',
-            bottom: '20px',
-            left: '50%',
-            transform: 'translateX(-50%)',
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            color: 'white',
-            padding: '10px 20px',
-            borderRadius: '4px',
-            zIndex: '1000',
-            opacity: '0',
-            transition: 'opacity 0.3s ease'
-        });
         
         // Add to document
         document.body.appendChild(toast);
         
-        // Show and hide with animation
-        setTimeout(() => {
-            toast.style.opacity = '1';
-        }, 10);
-        
+        // Remove toast after delay
         setTimeout(() => {
             toast.style.opacity = '0';
             setTimeout(() => {
@@ -370,4 +242,20 @@ document.addEventListener('DOMContentLoaded', function() {
             }, 300);
         }, 3000);
     }
+    
+    // Listen for cart updates from other tabs
+    window.addEventListener('storage', function(e) {
+        if (e.key === 'cartUpdated') {
+            // Refresh cart notification if needed
+        }
+    });
+    
+    // Initialize product details based on ID
+    function initProductDetails() {
+        // In a real app, you would fetch product details from an API
+        // based on the productId and update the page accordingly
+        console.log(`Loading details for product ${productId}`);
+    }
+    
+    initProductDetails();
 });
